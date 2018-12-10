@@ -9,6 +9,9 @@ class Home extends Component {
     constructor(props) {
         super(props);
         this.state = {
+            response: '',
+            post: '',
+            responseToPost: '',
             cityList: [{
                 name: "NewYork",
                 src: "https://photos.mandarinoriental.com/is/image/MandarinOriental/new-york-2017-columbus-circle-01?$MO_masthead-property-mobile$"
@@ -63,6 +66,29 @@ class Home extends Component {
         this.generateRandomNumber();
         return cities.slice(this.state.minNum, this.state.minNum + 4);
     };
+    componentDidMount() {
+        this.callApi()
+            .then(res => this.setState({ response: res.express }))
+            .catch(err => console.log(err));
+    }
+    callApi = async () => {
+        const response = await fetch('/api/hello');
+        const body = await response.json();
+        if (response.status !== 200) throw Error(body.message);
+        return body;
+    };
+    handleSubmit = async e => {
+        e.preventDefault();
+        const response = await fetch('/api/world', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ post: this.state.post }),
+        });
+        const body = await response.text();
+        this.setState({ responseToPost: body });
+    };
 
     render() {
         return (
@@ -73,6 +99,20 @@ class Home extends Component {
                 <div className="section">
                     <img className="circle" src={require("../images/circled-right.png")} alt="circle"/>
                 </div>
+                <p>{this.state.response}</p>
+                <form onSubmit={this.handleSubmit}>
+                    <p>
+                        <strong>Post to Server:</strong>
+                    </p>
+                    <input
+                        className="inputTest"
+                        type="text"
+                        value={this.state.post}
+                        onChange={e => this.setState({ post: e.target.value })}
+                    />
+                    <button type="submit">Submit</button>
+                </form>
+                <p>{this.state.responseToPost}</p>
                 {/*<div className="section popularCities">*/}
                 {/*<h5>Popular MYtinerary</h5>*/}
                 {/*<Slider>*/}

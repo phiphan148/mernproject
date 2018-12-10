@@ -9,24 +9,23 @@ var ObjectID = require('mongodb').ObjectID; // we will use this later
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
-// MongoClient.connect('mongodb://dev2:dev12345678@ds129904.mlab.com:29904/mernproject', (err, database) => {
-//     var dbase = db.db("mernproject");
-//     if (err) return console.log(err)
-// });
-//
-app.post('/name/add', (req, res, next) => {
+MongoClient.connect('mongodb://dev2:dev12345678@ds129904.mlab.com:29904/mernproject', (err, database) => {
+    var dbase = database.db("mernproject");
+    if (err) return console.log(err)
+    app.post('/name/add', (req, res, next) => {
 
-    var name = {
-        first_name: req.body.first_name,
-        last_name: req.body.last_name
-    };
+        var name = {
+            first_name: req.body.first_name,
+            last_name: req.body.last_name
+        };
 
-    dbase.collection("name").save(name, (err, result) => {
-        if(err) {
-            console.log(err);
-        }
+        dbase.collection("name").save(name, (err, result) => {
+            if(err) {
+                console.log(err);
+            }
 
-        res.send('name added successfully');
+            res.send('name added successfully');
+        });
     });
 });
 
