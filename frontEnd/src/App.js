@@ -43,10 +43,6 @@ class App extends Component {
                 <div className="App">
                     <NavBar/>
                     <Route exact path="/" component={Home}/>
-                    <Route path="/Cities" component={Cities}/>
-                    <Route path="/SignUp" component={SignUp}/>
-                    <Route path="/LogIn" component={LogIn}/>
-                    <Footer/>
                     <p>{this.state.response}</p>
                     <form onSubmit={this.handleSubmit}>
                         <p>
@@ -60,6 +56,10 @@ class App extends Component {
                         <button type="submit">Submit</button>
                     </form>
                     <p>{this.state.responseToPost}</p>
+                    <Route path="/Cities" component={Cities}/>
+                    <Route path="/SignUp" component={SignUp}/>
+                    <Route path="/LogIn" component={LogIn}/>
+                    <Footer/>
                 </div>
             </Router>
         );

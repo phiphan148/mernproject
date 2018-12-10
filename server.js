@@ -14,21 +14,21 @@ app.use(bodyParser.urlencoded({ extended: true }));
 //     if (err) return console.log(err)
 // });
 //
-// app.post('/name/add', (req, res, next) => {
-//
-//     var name = {
-//         first_name: req.body.first_name,
-//         last_name: req.body.last_name
-//     };
-//
-//     dbase.collection("name").save(name, (err, result) => {
-//         if(err) {
-//             console.log(err);
-//         }
-//
-//         res.send('name added successfully');
-//     });
-// });
+app.post('/name/add', (req, res, next) => {
+
+    var name = {
+        first_name: req.body.first_name,
+        last_name: req.body.last_name
+    };
+
+    dbase.collection("name").save(name, (err, result) => {
+        if(err) {
+            console.log(err);
+        }
+
+        res.send('name added successfully');
+    });
+});
 
 app.get('/api/hello', (req, res) => {
     res.send({ express: 'Hello From Express' });
