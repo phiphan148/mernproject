@@ -1,6 +1,7 @@
 import React, {Component} from 'react';
 import Banner from '../components/Banner.js'
 import PopularCity from '../components/PopularCity.js'
+import { Link } from 'react-router-dom'
 // import Slider from 'react-animated-slider';
 import 'react-animated-slider/build/horizontal.css';
 
@@ -97,7 +98,7 @@ class Home extends Component {
                 <p className="section">Find your perfect trip, designed by insiders who know and love their
                     cities.</p>
                 <div className="section">
-                    <img className="circle" src={require("../images/circled-right.png")} alt="circle"/>
+                    <Link to={'/cities'}><img className="circle" src={require("../images/circled-right.png")} alt="circle"/></Link>
                 </div>
                 <p>{this.state.response}</p>
                 <form onSubmit={this.handleSubmit}>

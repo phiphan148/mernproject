@@ -4,27 +4,114 @@ const app = express();
 const router = express.Router();
 const port = process.env.PORT || 5000;
 const MongoClient = require('mongodb').MongoClient;
-var ObjectID = require('mongodb').ObjectID; // we will use this later
+var ObjectID = require('mongodb').ObjectID;
+const mongoose = require('mongoose');
+var citySchema = require("./models/City");
+
+mongoose.connect('mongodb://dev1:dev12345678@ds129904.mlab.com:29904/mernproject', { useNewUrlParser: true }, function(error) {
+    if(error) return console.log(error);
+});
+
+app.get('/cities', (req, res)=>{
+    citySchema.find()
+        .then(result => res.send(result))
+        .catch(err => console.log(err))
+});
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
-MongoClient.connect('mongodb://dev2:dev12345678@ds129904.mlab.com:29904/mernproject', (err, database) => {
+MongoClient.connect('mongodb://dev1:dev12345678@ds129904.mlab.com:29904/mernproject', { useNewUrlParser: true }, (err, database) => {
     var dbase = database.db("mernproject");
-    if (err) return console.log(err)
-    app.post('/name/add', (req, res, next) => {
+    if (err) return console.log(err);
+    app.post('/names/add', (req, res, next) => {
 
-        var name = {
+        let name = {
             first_name: req.body.first_name,
             last_name: req.body.last_name
         };
 
-        dbase.collection("name").save(name, (err, result) => {
+        dbase.collection("names").save(name, (err, result) => {
             if(err) {
                 console.log(err);
             }
 
             res.send('name added successfully');
+        });
+    });
+
+    app.post('/cities/add', (req, res, next) => {
+
+        let city = {
+            name: req.body.name,
+            country: req.body.country
+        };
+
+        dbase.collection("cities").save(city, (err, result) => {
+            if(err) {
+                console.log(err);
+            }
+
+            res.send('city added successfully');
+        });
+    });
+
+    app.get('/names', (req, res) => {
+        dbase.collection('names').find().toArray( (err, results) => {
+            res.send(results)
+        });
+    });
+
+    app.get('/names/:id', (req, res, next) => {
+        if(err) {
+            throw err;
+        }
+
+        let id = ObjectID(req.params.id);
+        dbase.collection('names').find(id).toArray( (err, result) => {
+            if(err) {
+                throw err;
+            }
+
+            res.send(result);
+        });
+    });
+
+    app.delete('/cities/delete/:id', (req, res, next) => {
+        let id = ObjectID(req.params.id);
+
+        dbase.collection('cities').deleteOne({_id: id}, (err, result) => {
+            if(err) {
+                throw err;
+            }
+
+            res.send('city deleted');
+        });
+    });
+
+    app.put('/names/update/:id', (req, res, next) => {
+        let id = {
+            _id: new ObjectID(req.params.id)
+        };
+
+        dbase.collection("names").updateOne(id, {$set:{first_name: req.body.first_name, last_name: req.body.last_name}}, (err, result) => {
+            if(err) {
+                throw err;
+            }
+
+            res.send('user updated sucessfully');
+        });
+    });
+
+    app.delete('/names/delete/:id', (req, res, next) => {
+        let id = ObjectID(req.params.id);
+
+        dbase.collection('names').deleteOne({_id: id}, (err, result) => {
+            if(err) {
+                throw err;
+            }
+
+            res.send('user deleted');
         });
     });
 });
@@ -44,7 +131,7 @@ router.get('/', (req, res) => {
     res.send('This is the homepage!')
 });
 
-router.get('/test', (req, res) => {
+router.get('/testworking', (req, res) => {
     res.send({ msg: 'Test works' });
 });
 
@@ -55,9 +142,3 @@ router.post('/contact', (req, res) => {
 app.use('/', router);
 
 app.listen(port, () => console.log(`Listening on port ${port}`));
-
-// const express = require("express");
-// const app = express();
-// app.get("/", (req, res) => res.send("HELLO WORLD"));
-// const port = process.env.PORT || 5000;
-// app.listen(port, () => console.log(`Server running on port ${port}`));
