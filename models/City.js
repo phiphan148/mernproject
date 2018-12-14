@@ -1,7 +1,7 @@
 var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
 // define a schema
-var CitySchema = new Schema({ name: String, country: String }, { collection: 'cities' });
+var CitySchema = new Schema({ name: String, src: String, country: String }, { collection: 'cities' });
 module.exports = City = mongoose.model('City', CitySchema);
 
 

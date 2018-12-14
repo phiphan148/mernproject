@@ -7,6 +7,9 @@ const MongoClient = require('mongodb').MongoClient;
 var ObjectID = require('mongodb').ObjectID;
 const mongoose = require('mongoose');
 var citySchema = require("./models/City");
+var cors = require('cors');
+
+app.use(cors());
 
 mongoose.connect('mongodb://dev1:dev12345678@ds129904.mlab.com:29904/mernproject', { useNewUrlParser: true }, function(error) {
     if(error) return console.log(error);
@@ -24,21 +27,6 @@ app.use(bodyParser.urlencoded({ extended: true }));
 MongoClient.connect('mongodb://dev1:dev12345678@ds129904.mlab.com:29904/mernproject', { useNewUrlParser: true }, (err, database) => {
     var dbase = database.db("mernproject");
     if (err) return console.log(err);
-    app.post('/names/add', (req, res, next) => {
-
-        let name = {
-            first_name: req.body.first_name,
-            last_name: req.body.last_name
-        };
-
-        dbase.collection("names").save(name, (err, result) => {
-            if(err) {
-                console.log(err);
-            }
-
-            res.send('name added successfully');
-        });
-    });
 
     app.post('/cities/add', (req, res, next) => {
 
@@ -56,19 +44,33 @@ MongoClient.connect('mongodb://dev1:dev12345678@ds129904.mlab.com:29904/mernproj
         });
     });
 
-    app.get('/names', (req, res) => {
-        dbase.collection('names').find().toArray( (err, results) => {
+    app.put('/cities/update/:id', (req, res, next) => {
+        let id = {
+            _id: new ObjectID(req.params.id)
+        };
+
+        dbase.collection("cities").updateOne(id, {$set:{name: req.body.name, src: req.body.src, country: req.body.country}}, (err, result) => {
+            if(err) {
+                throw err;
+            }
+
+            res.send('city updated sucessfully');
+        });
+    });
+
+    app.get('/cities', (req, res) => {
+        dbase.collection('cities').find().toArray( (err, results) => {
             res.send(results)
         });
     });
 
-    app.get('/names/:id', (req, res, next) => {
+    app.get('/cities/:id', (req, res, next) => {
         if(err) {
             throw err;
         }
 
         let id = ObjectID(req.params.id);
-        dbase.collection('names').find(id).toArray( (err, result) => {
+        dbase.collection('cities').find(id).toArray( (err, result) => {
             if(err) {
                 throw err;
             }
@@ -89,42 +91,21 @@ MongoClient.connect('mongodb://dev1:dev12345678@ds129904.mlab.com:29904/mernproj
         });
     });
 
-    app.put('/names/update/:id', (req, res, next) => {
-        let id = {
-            _id: new ObjectID(req.params.id)
+    app.post('/names/add', (req, res, next) => {
+
+        let name = {
+            first_name: req.body.first_name,
+            last_name: req.body.last_name
         };
 
-        dbase.collection("names").updateOne(id, {$set:{first_name: req.body.first_name, last_name: req.body.last_name}}, (err, result) => {
+        dbase.collection("names").save(name, (err, result) => {
             if(err) {
-                throw err;
+                console.log(err);
             }
 
-            res.send('user updated sucessfully');
+            res.send('name added successfully');
         });
     });
-
-    app.delete('/names/delete/:id', (req, res, next) => {
-        let id = ObjectID(req.params.id);
-
-        dbase.collection('names').deleteOne({_id: id}, (err, result) => {
-            if(err) {
-                throw err;
-            }
-
-            res.send('user deleted');
-        });
-    });
-});
-
-app.get('/api/hello', (req, res) => {
-    res.send({ express: 'Hello From Express' });
-});
-
-app.post('/api/world', (req, res) => {
-    console.log(req.body);
-    res.send(
-        `I received your POST request. This is what you sent me: ${req.body.post}`,
-    );
 });
 
 router.get('/', (req, res) => {

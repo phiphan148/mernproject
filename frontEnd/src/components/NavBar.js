@@ -23,10 +23,10 @@ class NavBar extends Component {
                     </div>
                 </div>
                 <div id="nav" className="menuContent menuClose">
-                    <p><Link to={'/'}>Home</Link></p>
-                    <p><Link to={'/Cities'}>Cities</Link></p>
-                    <p><Link to={'/SignUp'}>Create Account</Link></p>
-                    <p><Link to={'/LogIn'}>Log in</Link></p>
+                    <p><Link onClick={this.menuClick} to={'/'}>Home</Link></p>
+                    <p><Link onClick={this.menuClick} to={'/Cities'}>Cities</Link></p>
+                    <p><Link onClick={this.menuClick} to={'/SignUp'}>Create Account</Link></p>
+                    <p><Link onClick={this.menuClick} to={'/LogIn'}>Log in</Link></p>
                 </div>
             </div>
 
